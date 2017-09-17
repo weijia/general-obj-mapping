@@ -1,0 +1,17 @@
+{% extends "django_auto_filter/filters.html" %}
+{% load bootstrap %}
+{% load static %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+  <form action="" method="get" class="form-inline" id="content-type-selector">
+      {% csrf_token %}
+      <legend>{% trans 'Source model:'%}</legend>
+      {{ content_type_filter_form|bootstrap}}
+      <button type="submit" class="btn btn-primary">{% trans 'Select' %}</button>
+  </form>
+  {% if is_content_type_selected %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
