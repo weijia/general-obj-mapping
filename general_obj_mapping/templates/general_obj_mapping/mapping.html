@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+{% load static %}
+{% load i18n %}
+{% load django_tables2 %}
+{% load gen_tag_attr %}
+    {% block js %}
+        {{ block.super }}
+        <!--Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="{% static 'js/bootstrap-table/dist/bootstrap-table.min.css' %}">
+        <!--<link rel='stylesheet' type='text/css' href="{% static 'css/jquery-ui/smoothness/jquery-ui.css' %}" />-->
+        <!--<script type='text/javascript' src="{% static 'js/jquery-ui.js' %}"></script>-->
+        <script src="{% static 'js/bootstrap-table/dist/bootstrap-table.js'%}"></script>
+        <script src="{% static 'js/bootstrap_table_render.js'%}"></script>
+        <!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/bs/dt-1.10.11,b-1.1.2,b-colvis-1.1.2/datatables.min.css"/>-->
+        <!--&lt;!&ndash;<script src="http://rawgithub.com/akottr/dragtable/master/jquery.dragtable.js"></script>&ndash;&gt;-->
+        <!--<script type="text/javascript" src="https://cdn.datatables.net/t/bs/dt-1.10.11,b-1.1.2,b-colvis-1.1.2/datatables.min.js"></script>-->
+    {% endblock %}
+{% block content %}
+  {% block filter_block %}
+  <form action="" method="get" class="form-inline" id="auto-filter-form"
+        keyword_placeholder="{{ keyword_fields|join:' / ' }}">
+      {% csrf_token %}
+      {{ form|bootstrap}}<br/><br/>
+          <!--<input type="submit" />-->
+          <button type="submit" class="btn btn-primary">{% trans 'Search' %}</button>
+  </form>
+  {% endblock %}
+  <div class="scroll-table-container">
+  {% render_table table 'django_auto_filter/table.html' %}
+  </div>
+{% endblock %}
