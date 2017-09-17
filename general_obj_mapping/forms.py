@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.forms import Form, ModelChoiceField
+from django.forms import Form, ModelChoiceField, IntegerField
 
 
 class SourceTargetSelectForm(Form):
@@ -9,3 +9,5 @@ class SourceTargetSelectForm(Form):
 
 class FilterSelectForm(Form):
     source_content = ModelChoiceField(queryset=ContentType.objects.order_by('model'))
+    target_content = ModelChoiceField(queryset=ContentType.objects.order_by('model'), required=False)
+    item_per_page = IntegerField(initial=5)

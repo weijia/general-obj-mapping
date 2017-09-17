@@ -5,7 +5,7 @@ from general_obj_mapping.forms import FilterSelectForm
 
 
 class ObjectFilteringByContentType(DjangoAutoFilter):
-    template_name = "general_obj_mapping/filter_and_mapping.html"
+    template_name = "general_obj_mapping/object_filtering_by_content_type.html"
 
     def get_context_data(self, **kwargs):
         is_content_type_selected = False

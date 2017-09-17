@@ -1,10 +1,12 @@
 from django.contrib.auth.models import User, Group
 from django.views.generic import TemplateView
+from django_tables2 import RequestConfig
 
 from django_auto_filter.table_generator import TableGenerator
-from general_obj_mapping.forms import SourceTargetSelectForm
+from general_obj_mapping.forms import SourceTargetSelectForm, FilterSelectForm
 from general_obj_mapping.models import MappingRelation
-from general_obj_mapping.table import MappingRelationshipTable
+from general_obj_mapping.tables import MappingRelationshipTable, MappingCreatorTable
+from one_lab_enhancement.models import NsnUpperLevelTeam
 
 
 class ObjectMappingView(TemplateView):
@@ -22,5 +24,24 @@ class ObjectMappingView(TemplateView):
             mapping = MappingRelation.objects.filter(source_content_type=form.cleaned_data["source_content"],
                                                      target_content_type=form.cleaned_data["target_content"])
         t = MappingRelationshipTable(mapping)
+        ctx["table"] = t
+        return ctx
+
+
+class MappingCreatorView(TemplateView):
+    template_name = 'general_obj_mapping/mapping.html'
+    item_per_page = 5
+
+    def get_context_data(self, **kwargs):
+        # self.source_model.objects.filter()
+        ctx = super(MappingCreatorView, self).get_context_data(**kwargs)
+        form = FilterSelectForm(self.request.GET)
+        ctx["form"] = form
+        # if form.is_valid():
+        #     mapping = MappingRelation.objects.filter(source_content_type=form.cleaned_data["source_content"],
+        #                                              target_content_type=form.cleaned_data["target_content"])
+        t = MappingCreatorTable(NsnUpperLevelTeam.objects.all())
+        RequestConfig(self.request, paginate={"per_page": self.item_per_page}).configure(t)
+        # t = MappingCreatorTable(NsnUpperLevelTeam.objects.all())
         ctx["table"] = t
         return ctx
