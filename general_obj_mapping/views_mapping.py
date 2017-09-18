@@ -1,12 +1,10 @@
-from django.contrib.auth.models import User, Group
 from django.views.generic import TemplateView
 from django_tables2 import RequestConfig
 
-from django_auto_filter.table_generator import TableGenerator
 from general_obj_mapping.forms import SourceTargetSelectForm, FilterSelectForm
 from general_obj_mapping.models import MappingRelation
 from general_obj_mapping.tables import MappingRelationshipTable, MappingCreatorTable
-from one_lab_enhancement.models import NsnUpperLevelTeam, JiraBusiness
+from one_lab_enhancement.models import NsnUpperLevelTeam, CurrentJiraBusiness
 
 
 class ObjectMappingView(TemplateView):
@@ -31,6 +29,8 @@ class ObjectMappingView(TemplateView):
 class MappingCreatorView(TemplateView):
     template_name = 'general_obj_mapping/mapping.html'
     item_per_page = 5
+    source_model = NsnUpperLevelTeam
+    target_model = CurrentJiraBusiness
 
     def get_context_data(self, **kwargs):
         # self.source_model.objects.filter()
@@ -41,7 +41,7 @@ class MappingCreatorView(TemplateView):
         #     mapping = MappingRelation.objects.filter(source_content_type=form.cleaned_data["source_content"],
         #                                              target_content_type=form.cleaned_data["target_content"])
         if form.is_valid():
-            t = MappingCreatorTable(NsnUpperLevelTeam, JiraBusiness, NsnUpperLevelTeam.objects.all())
+            t = MappingCreatorTable(self.source_model, self.target_model, self.source_model.objects.all())
             RequestConfig(self.request, paginate={"per_page": form.cleaned_data["item_per_page"]}).configure(t)
             # t = MappingCreatorTable(NsnUpperLevelTeam.objects.all())
             ctx["table"] = t
