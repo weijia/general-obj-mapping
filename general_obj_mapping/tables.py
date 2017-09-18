@@ -26,13 +26,26 @@ class MappingRelationshipTable(TableReport):
 
 
 class MappingCreatorTable(TableReport):
+    id = Column()
+    source_content_type_id = Column(empty_values=())
+    target_content_type_id = Column(empty_values=())
     source = Column(empty_values=())
     target = Column(empty_values=())
 
-    def __init__(self, *args, **kwargs):
+    class Meta:
+        attrs = {}
+
+    def __init__(self, source_model, target_model, *args, **kwargs):
+        self.source_model = source_model
+        self.target_model = target_model
+        self.target_content_type = ContentType.objects.get_for_model(self.target_model)
+        self.source_content_type = ContentType.objects.get_for_model(self.source_model)
+        self.Meta.attrs = {"source_content_type_id": self.source_content_type.id,
+                           "target_content_type_id": self.target_content_type.id,
+                           }
         super(MappingCreatorTable, self).__init__(*args, **kwargs)
-        self.source_model = NsnUpperLevelTeam
-        self.target_model = JiraBusiness
+        # self.source_model = NsnUpperLevelTeam
+        # self.target_model = JiraBusiness
 
     # # class Meta:
     # #     model = NsnUpperLevelTeam
@@ -45,10 +58,16 @@ class MappingCreatorTable(TableReport):
 
     def render_target(self, record):
         target_object = MappingRelation.objects.filter(
-            source_content_type=ContentType.objects.get_for_model(self.source_model),
+            source_content_type=self.source_content_type,
             source_object_id=record.id,
-            target_content_type=ContentType.objects.get_for_model(self.target_model))
+            target_content_type=self.target_content_type)
         value = ""
         if target_object.exists():
             value = target_object[0].target
         return value
+
+    def render_source_content_type_id(self):
+        return self.source_content_type.id
+
+    def render_target_content_type_id(self):
+        return self.target_content_type.id

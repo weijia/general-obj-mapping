@@ -6,7 +6,7 @@ from django_auto_filter.table_generator import TableGenerator
 from general_obj_mapping.forms import SourceTargetSelectForm, FilterSelectForm
 from general_obj_mapping.models import MappingRelation
 from general_obj_mapping.tables import MappingRelationshipTable, MappingCreatorTable
-from one_lab_enhancement.models import NsnUpperLevelTeam
+from one_lab_enhancement.models import NsnUpperLevelTeam, JiraBusiness
 
 
 class ObjectMappingView(TemplateView):
@@ -35,13 +35,16 @@ class MappingCreatorView(TemplateView):
     def get_context_data(self, **kwargs):
         # self.source_model.objects.filter()
         ctx = super(MappingCreatorView, self).get_context_data(**kwargs)
-        form = FilterSelectForm(self.request.GET)
+        form = FilterSelectForm(self.request.GET, initial={"item_per_page": self.item_per_page})
         ctx["form"] = form
         # if form.is_valid():
         #     mapping = MappingRelation.objects.filter(source_content_type=form.cleaned_data["source_content"],
         #                                              target_content_type=form.cleaned_data["target_content"])
-        t = MappingCreatorTable(NsnUpperLevelTeam.objects.all())
-        RequestConfig(self.request, paginate={"per_page": self.item_per_page}).configure(t)
-        # t = MappingCreatorTable(NsnUpperLevelTeam.objects.all())
-        ctx["table"] = t
+        if form.is_valid():
+            t = MappingCreatorTable(NsnUpperLevelTeam, JiraBusiness, NsnUpperLevelTeam.objects.all())
+            RequestConfig(self.request, paginate={"per_page": form.cleaned_data["item_per_page"]}).configure(t)
+            # t = MappingCreatorTable(NsnUpperLevelTeam.objects.all())
+            ctx["table"] = t
+        else:
+            ctx["table"] = None
         return ctx
