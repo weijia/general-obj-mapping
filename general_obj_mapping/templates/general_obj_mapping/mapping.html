@@ -20,6 +20,7 @@
         <!--<script type="text/javascript" src="https://cdn.datatables.net/t/bs/dt-1.10.11,b-1.1.2,b-colvis-1.1.2/datatables.min.js"></script>-->
     {% endblock %}
 {% block content %}
+  <script>var target_autocomplete_url="{{ target_autocomplete_url }}";</script>
   {% block filter_block %}
   <form action="" method="get" class="form-inline" id="auto-filter-form"
         keyword_placeholder="{{ keyword_fields|join:' / ' }}">

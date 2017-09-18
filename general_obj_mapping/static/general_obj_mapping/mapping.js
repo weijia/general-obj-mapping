@@ -20,7 +20,7 @@ $(document).ready( function () {
         var inputElem = $('<input value="'+t+'" rows="1" size="50"></input>');
         var i = $(value).append(inputElem);
         inputElem.autocomplete({
-          source: '/ajax_select/ajax_lookup/jira_business',
+          source: target_autocomplete_url,
           response: function( event, ui ) {
 //            console.log(event);
 

@@ -1,6 +1,7 @@
 from django.views.generic import TemplateView
 from django_tables2 import RequestConfig
 
+from djangoautoconf.ajax_select_utils.channel_creator_for_model import get_low_case_model_class_name
 from general_obj_mapping.forms import SourceTargetSelectForm, FilterSelectForm
 from general_obj_mapping.models import MappingRelation
 from general_obj_mapping.tables import MappingRelationshipTable, MappingCreatorTable
@@ -45,6 +46,9 @@ class MappingCreatorView(TemplateView):
             RequestConfig(self.request, paginate={"per_page": form.cleaned_data["item_per_page"]}).configure(t)
             # t = MappingCreatorTable(NsnUpperLevelTeam.objects.all())
             ctx["table"] = t
+            ctx["target_autocomplete_url"] = '/ajax_select/ajax_lookup/%s' % \
+                                             get_low_case_model_class_name(self.target_model)
         else:
             ctx["table"] = None
+            ctx["target_autocomplete_url"] = ''
         return ctx
